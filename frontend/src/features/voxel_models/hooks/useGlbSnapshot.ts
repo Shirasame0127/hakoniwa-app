@@ -51,6 +51,7 @@ async function renderSnapshot(url: string, bgColor: string): Promise<string> {
   scene.add(ambient, dir1, dir2);
 
   const loader = new GLTFLoader();
+  loader.crossOrigin = "anonymous"; // R2 CORS 対応
   const gltf = await new Promise<any>((resolve, reject) =>
     loader.load(url, resolve, undefined, reject)
   );
