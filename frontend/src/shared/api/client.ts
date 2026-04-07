@@ -2,6 +2,8 @@
  * APIクライアント
  */
 
+import { getSession } from "next-auth/react";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export class ApiClient {
@@ -10,11 +12,21 @@ export class ApiClient {
     options?: RequestInit
   ): Promise<T> {
     const url = `${API_URL}${path}`;
+
+    // next-auth のセッションから accessToken を取得
+    const session = await getSession();
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    };
+
+    // Authorization ヘッダを追加（Bearer トークン）
+    if (session?.accessToken) {
+      headers["Authorization"] = `Bearer ${session.accessToken}`;
+    }
+
     const response = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
+      headers,
       ...options,
     });
 

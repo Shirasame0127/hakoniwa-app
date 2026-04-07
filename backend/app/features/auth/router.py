@@ -1,7 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.shared.db import get_db
-from app.features.auth.schemas import LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UserResponse
+from app.features.auth.schemas import (
+    LoginRequest,
+    LoginResponse,
+    RegisterRequest,
+    RegisterResponse,
+    UserResponse,
+    GoogleOAuthCallbackRequest,
+    OAuthResponse,
+)
 from app.features.auth.service import (
     authenticate_user,
     create_user,
@@ -9,6 +17,8 @@ from app.features.auth.service import (
     create_access_token,
     verify_token,
     get_user_by_id,
+    verify_google_token,
+    create_or_update_oauth_user,
 )
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -99,4 +109,51 @@ def get_current_user(token: str = None, db: Session = Depends(get_db)):
         id=str(user.id),
         email=user.email,
         is_active=bool(user.is_active),
+    )
+
+
+@router.post("/google/callback", response_model=OAuthResponse)
+def google_oauth_callback(request: GoogleOAuthCallbackRequest, db: Session = Depends(get_db)):
+    """Google OAuth コールバック
+
+    Google ID トークンを検証して、ユーザーを作成・ログインする
+    """
+    # Google ID トークンを検証
+    idinfo = verify_google_token(request.id_token)
+    if not idinfo:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Google トークンが無効です",
+        )
+
+    # Google の sub（ユーザーID）とメールを取得
+    google_id = idinfo.get("sub")
+    email = idinfo.get("email")
+    name = idinfo.get("name")
+
+    if not google_id or not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google トークンから必要な情報が取得できません",
+        )
+
+    # ユーザーを作成・更新
+    user = create_or_update_oauth_user(db, "google", google_id, email, name)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="ユーザー作成に失敗しました",
+        )
+
+    # JWT トークンを生成
+    access_token = create_access_token(user.id)
+
+    return OAuthResponse(
+        access_token=access_token,
+        token_type="bearer",
+        user=UserResponse(
+            id=str(user.id),
+            email=user.email,
+            is_active=bool(user.is_active),
+        ),
     )

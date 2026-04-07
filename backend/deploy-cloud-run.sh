@@ -3,6 +3,9 @@
 
 set -e
 
+# PATH に Google Cloud SDK を追加
+export PATH="/home/shira/google-cloud-sdk/bin:$PATH"
+
 # 📋 セットアップチェック
 echo "=== Google Cloud Run デプロイ スクリプト ==="
 echo ""
@@ -19,6 +22,9 @@ echo "✅ .env ファイルを確認しました"
 DATABASE_URL=$(grep '^DATABASE_URL=' ../.env | cut -d'=' -f2-)
 SUPABASE_URL=$(grep '^SUPABASE_URL=' ../.env | cut -d'=' -f2-)
 SUPABASE_ANON_KEY=$(grep '^SUPABASE_ANON_KEY=' ../.env | cut -d'=' -f2-)
+GOOGLE_OAUTH_CLIENT_SECRET=$(grep '^GOOGLE_OAUTH_CLIENT_SECRET=' ../.env | cut -d'=' -f2-)
+ANTHROPIC_API_KEY=$(grep '^ANTHROPIC_API_KEY=' ../.env | cut -d'=' -f2-)
+JWT_SECRET=$(grep '^JWT_SECRET=' ../.env | cut -d'=' -f2-)
 
 if [ -z "$DATABASE_URL" ]; then
     echo "❌ エラー: DATABASE_URL が設定されていません"
@@ -102,6 +108,10 @@ gcloud run deploy "$SERVICE_NAME" \
   --set-env-vars "DATABASE_URL=$DATABASE_URL" \
   --set-env-vars "SUPABASE_URL=$SUPABASE_URL" \
   --set-env-vars "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY" \
+  --set-env-vars "FRONTEND_URL=https://hakoniwa-app.pages.dev" \
+  --set-env-vars "GOOGLE_OAUTH_CLIENT_SECRET=$GOOGLE_OAUTH_CLIENT_SECRET" \
+  --set-env-vars "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY" \
+  --set-env-vars "JWT_SECRET=$JWT_SECRET" \
   --platform managed
 
 echo ""

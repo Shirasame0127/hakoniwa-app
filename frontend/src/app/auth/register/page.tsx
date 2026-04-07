@@ -6,41 +6,85 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Icons } from "@/shared/ui/icons";
 
-export default function LoginPage() {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const validatePassword = (pwd: string) => {
+    if (pwd.length < 6) return "パスワードは6文字以上である必要があります";
+    if (!/[A-Z]/.test(pwd)) return "大文字を1つ以上含める必要があります";
+    if (!/[0-9]/.test(pwd)) return "数字を1つ以上含める必要があります";
+    return null;
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
+    // バリデーション
+    if (!email || !password || !confirmPassword) {
+      setError("すべてのフィールドを入力してください");
+      return;
+    }
+
+    const pwdError = validatePassword(password);
+    if (pwdError) {
+      setError(pwdError);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("パスワードが一致しません");
+      return;
+    }
+
+    if (!agreeTerms) {
+      setError("利用規約に同意する必要があります");
+      return;
+    }
+
+    setLoading(true);
+
     try {
+      // バックエンドに登録要求
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.detail || "登録失敗");
+      }
+
+      // 登録成功後、自動ログイン
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
 
-      if (result?.error) {
-        setError(result.error || "ログイン失敗");
-        return;
-      }
-
       if (result?.ok) {
         router.push("/garden");
+      } else {
+        setError("登録後のログインに失敗しました");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ログインに失敗しました");
+      setError(err instanceof Error ? err.message : "登録に失敗しました");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleRegister = async () => {
     setLoading(true);
     setError("");
 
@@ -51,7 +95,7 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError("Google ログインに失敗しました");
+        setError("Google 登録に失敗しました");
         return;
       }
 
@@ -59,7 +103,7 @@ export default function LoginPage() {
         router.push("/garden");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Google ログインに失敗しました");
+      setError(err instanceof Error ? err.message : "Google 登録に失敗しました");
     } finally {
       setLoading(false);
     }
@@ -76,16 +120,16 @@ export default function LoginPage() {
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}>
-              ログイン
+              新規登録
             </span>
           </h1>
           <p className="text-slate-400 text-sm">
-            箱庭OSにログインして、AI ライフマネジメントを始めましょう
+            箱庭OSでAIライフマネジメントを始めよう
           </p>
         </div>
 
-        {/* ログインフォーム */}
-        <form onSubmit={handleEmailLogin} className="space-y-4">
+        {/* 登録フォーム */}
+        <form onSubmit={handleRegister} className="space-y-4">
           {/* Email Input */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -120,6 +164,49 @@ export default function LoginPage() {
                 className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 transition-all"
               />
             </div>
+            <p className="text-xs text-slate-400 mt-2">
+              6文字以上、大文字と数字を含める
+            </p>
+          </div>
+
+          {/* Confirm Password Input */}
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              パスワード確認
+            </label>
+            <div className="relative">
+              <Icons.Lock size={18} className="absolute left-3 top-3.5 text-slate-500" />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-green-500/50 focus:ring-1 focus:ring-green-500/20 transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Terms Checkbox */}
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="terms"
+              checked={agreeTerms}
+              onChange={(e) => setAgreeTerms(e.target.checked)}
+              className="mt-1 rounded border-white/10 bg-white/5 text-green-500 focus:ring-green-500/20"
+            />
+            <label htmlFor="terms" className="text-xs text-slate-400">
+              <span>AI箱庭ライフOSの</span>
+              <Link href="#" className="text-green-400 hover:text-green-300">
+                利用規約
+              </Link>
+              <span>と</span>
+              <Link href="#" className="text-green-400 hover:text-green-300">
+                プライバシーポリシー
+              </Link>
+              <span>に同意します</span>
+            </label>
           </div>
 
           {/* Error Message */}
@@ -138,12 +225,12 @@ export default function LoginPage() {
             {loading ? (
               <>
                 <Icons.Loader2 size={18} className="animate-spin" />
-                ログイン中...
+                登録中...
               </>
             ) : (
               <>
                 <Icons.Mail size={18} />
-                ログイン
+                メールで登録
               </>
             )}
           </button>
@@ -162,7 +249,7 @@ export default function LoginPage() {
         {/* Google OAuth Button */}
         <button
           type="button"
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleRegister}
           disabled={loading}
           className="w-full px-4 py-3 border border-white/10 rounded-xl text-center text-slate-300 font-medium hover:border-slate-500/50 hover:bg-white/5 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
         >
@@ -184,7 +271,7 @@ export default function LoginPage() {
               d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
             />
           </svg>
-          Google でログイン
+          Google で登録
         </button>
 
         {/* Links */}
@@ -201,9 +288,9 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-slate-500">
           <p>
-            アカウントを持っていませんか？
-            <Link href="/auth/register" className="text-green-400 hover:text-green-300 ml-1">
-              新規登録
+            既にアカウントをお持ちですか？
+            <Link href="/auth/login" className="text-green-400 hover:text-green-300 ml-1">
+              ログイン
             </Link>
           </p>
         </div>

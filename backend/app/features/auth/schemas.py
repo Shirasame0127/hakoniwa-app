@@ -42,3 +42,16 @@ class RegisterResponse(BaseModel):
 class TokenPayload(BaseModel):
     """トークンペイロード"""
     user_id: str
+
+
+class GoogleOAuthCallbackRequest(BaseModel):
+    """Google OAuth コールバックリクエスト"""
+    id_token: str
+
+
+class OAuthResponse(BaseModel):
+    """OAuth レスポンス"""
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+
