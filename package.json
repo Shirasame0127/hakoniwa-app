@@ -11,6 +11,7 @@
     "setup": "pnpm install",
     "dev": "pnpm --filter frontend dev",
     "build": "pnpm --filter frontend build",
+    "build:pages": "cd frontend && pnpm install && pnpm build:pages",
     "start": "pnpm --filter frontend start",
     "lint": "pnpm --filter frontend lint",
     "format": "pnpm --filter frontend format",
