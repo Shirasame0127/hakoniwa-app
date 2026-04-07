@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { getModelUrl } from "@/features/voxel_models/utils/modelUrl";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 function resolveUrl(modelPath: string): string {
-  if (modelPath.startsWith("/uploads")) {
-    return modelPath.startsWith("http") ? modelPath : `${BASE}${modelPath}`;
-  }
-  if (modelPath.startsWith("/models")) return modelPath;
-  return modelPath.startsWith("http") ? modelPath : `${BASE}${modelPath}`;
+  if (modelPath.startsWith("http")) return modelPath;
+  if (modelPath.startsWith("/uploads")) return `${BASE}${modelPath}`;
+  if (modelPath.startsWith("/models")) return getModelUrl(modelPath) ?? modelPath;
+  return `${BASE}${modelPath}`;
 }
 
 // キャッシュとシングルトンレンダラー（WebGL コンテキスト1つのみ）

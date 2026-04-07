@@ -4,15 +4,15 @@ import { Component, ReactNode, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useGLTF, OrbitControls } from "@react-three/drei";
 import { Box3, Vector3 } from "three";
+import { getModelUrl } from "@/features/voxel_models/utils/modelUrl";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 function resolveModelUrl(modelPath: string): string {
-  if (modelPath.startsWith("/uploads")) {
-    return modelPath.startsWith("http") ? modelPath : `${BASE}${modelPath}`;
-  }
-  if (modelPath.startsWith("/models")) return modelPath;
-  return modelPath.startsWith("http") ? modelPath : `${BASE}${modelPath}`;
+  if (modelPath.startsWith("http")) return modelPath;
+  if (modelPath.startsWith("/uploads")) return `${BASE}${modelPath}`;
+  if (modelPath.startsWith("/models")) return getModelUrl(modelPath) ?? modelPath;
+  return `${BASE}${modelPath}`;
 }
 
 /** フォールバック（モデルパスがない / エラー時）*/

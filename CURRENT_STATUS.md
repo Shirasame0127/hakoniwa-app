@@ -44,9 +44,10 @@ https://hakoniwa-api-zblzygj6bq-an.a.run.app/docs
 |--------------|------|------|
 | `GET /` | ✅ | ルート・API情報 |
 | `GET /health` | ✅ | ヘルスチェック |
-| `POST /auth/register` | ✅ | ユーザー登録 |
-| `POST /auth/login` | ✅ | ログイン |
-| `GET /objects` | ✅ | 3Dオブジェクト図鑑一覧 |
+| `POST /auth/register` | ✅ | ユーザー登録（メール/パスワード） |
+| `POST /auth/login` | ✅ | ログイン（メール/パスワード） |
+| `POST /auth/google/callback` | ✅ | Google OAuth コールバック |
+| `GET /api/objects` | ✅ | 3Dオブジェクト図鑑一覧 |
 | `GET /objects/{catalog_id}` | ✅ | オブジェクト詳細 |
 | `GET /weather/environment` | ✅ | 天候・環境データ |
 | `POST /weather/city` | ✅ | 連携都市設定 |
@@ -57,7 +58,11 @@ https://hakoniwa-api-zblzygj6bq-an.a.run.app/docs
 - ✅ オブジェクト図鑑表示
 - ✅ 天候・時間帯の動的反映
 - ✅ 認証画面（ログイン・登録）
+- ✅ **next-auth v5** セットアップ
+- ✅ **Google OAuth** ボタン
+- ✅ **メール/パスワード** ログイン・登録
 - ✅ Zustand 状態管理
+- ✅ Authorization ヘッダベース API 認証
 
 ---
 
@@ -65,7 +70,8 @@ https://hakoniwa-api-zblzygj6bq-an.a.run.app/docs
 
 | エンドポイント | 優先度 | 説明 |
 |--------------|--------|------|
-| `GET /api/garden` | 🔴 高 | 箱庭データ取得・管理 |
+| `POST /api/garden` | 🔴 高 | 箱庭初期化・状態管理 |
+| `GET /api/garden` | 🔴 高 | 箱庭データ取得 |
 | `POST /api/food` | 🔴 高 | 食材登録・管理 |
 | `GET /api/food` | 🔴 高 | 食材一覧取得 |
 | `POST /api/exercise` | 🟡 中 | 運動ログ記録 |
@@ -172,9 +178,18 @@ https://hakoniwa-app.pages.dev
 
 ## 🎯 次のステップ
 
-### 優先度 1: バックエンド実装
+### 優先度 1: 認証セットアップ完成（ユーザー対応）
+1. **Google Cloud Console** で OAuth 2.0 Credentials を取得
+2. **.env ファイル** に Google OAuth 情報を入力
+3. **ローカルテスト** (npm install → pip install → just migrate → just up)
+4. **Cloudflare Pages** で環境変数設定 + Retry deployment
+5. **Cloud Run デプロイ** 実行
+
+詳細: `AUTHENTICATION_SETUP.md` 参照
+
+### 優先度 2: バックエンド機能実装
 1. **Garden Router** (`/api/garden`)
-   - ユーザーの箱庭状態取得
+   - ユーザーの箱庭状態取得・初期化
    - オブジェクト配置管理
 
 2. **Food Router** (`/api/food`)
@@ -184,11 +199,11 @@ https://hakoniwa-app.pages.dev
 3. **Exercise Router** (`/api/exercise`)
    - 運動ログ記録・取得
 
-### 優先度 2: UI/UX 改善
+### 優先度 3: UI/UX 改善
 - スマホ最適化（ボトムシート、ジェスチャー）
 - ダーク モード検討
 
-### 優先度 3: AIエージェント
+### 優先度 4: AIエージェント
 - LangGraph で提案エージェント実装
 - ミニPC での常駐化
 
@@ -256,4 +271,6 @@ GitHub: Shirasame0127/hakoniwa-app
 
 **最終更新**: 2026-04-07
 **作成者**: Claude Code
+**認証システム**: ✅ メール + Google OAuth 実装完了
+**デプロイ準備**: ✅ GitHub push 完了 → ユーザーが Google OAuth を設定後、デプロイ開始
 **次のセッションで進捗確認用**

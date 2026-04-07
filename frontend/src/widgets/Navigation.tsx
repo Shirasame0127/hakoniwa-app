@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 import { Icons } from "@/shared/ui/icons";
 
 const navItems = [
@@ -16,6 +17,11 @@ const navItems = [
 export function Navigation() {
   const pathname = usePathname();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { data: session } = useSession();
+
+  const handleLogout = async () => {
+    await signOut({ redirect: true, redirectTo: "/auth/login" });
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b backdrop-blur-xl"
@@ -79,6 +85,20 @@ export function Navigation() {
             <span>v0.1 Dev</span>
           </div>
 
+          {/* ユーザー情報・ログアウト */}
+          {session?.user && (
+            <div className="hidden sm:flex items-center gap-3">
+              <span className="text-sm text-slate-400">{session.user.email}</span>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-red-400 hover:bg-red-500/10 transition-all border border-white/10 hover:border-red-500/30"
+              >
+                <Icons.LogOut size={16} className="inline mr-1.5" />
+                ログアウト
+              </button>
+            </div>
+          )}
+
           {/* Mobile Hamburger */}
           <button
             onClick={() => setIsDrawerOpen(!isDrawerOpen)}
@@ -124,6 +144,18 @@ export function Navigation() {
                 </Link>
               );
             })}
+            {session?.user && (
+              <button
+                onClick={() => {
+                  setIsDrawerOpen(false);
+                  handleLogout();
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-red-400 hover:bg-red-500/10 mt-2"
+              >
+                <Icons.LogOut size={20} />
+                <span className="font-medium">ログアウト</span>
+              </button>
+            )}
           </div>
         </div>
       )}

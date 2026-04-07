@@ -1,19 +1,15 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// auth.ts はサーバー側のみで実行される → INTERNAL_API_URL (Docker内部) を優先
+const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export const authOptions: NextAuthOptions = {
+const authConfig = {
   providers: [
     // Credentials プロバイダー（メール&パスワード）
     CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
+      async authorize(credentials: any) {
         if (!credentials?.email || !credentials.password) {
           throw new Error("メールアドレスとパスワードを入力してください");
         }
@@ -54,11 +50,9 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    // Google トークンをバックエンド経由で JWT に変換
-    async signIn({ user, account }) {
+    async signIn({ user, account }: any) {
       if (account?.provider === "google" && account.id_token) {
         try {
-          // バックエンドで Google トークンを検証
           const res = await fetch(`${API_URL}/api/auth/google/callback`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -70,7 +64,6 @@ export const authOptions: NextAuthOptions = {
           }
 
           const data = await res.json();
-          // ユーザーオブジェクトに accessToken を追加（JWT callback で使用）
           user.accessToken = data.access_token;
           user.id = data.user.id;
           user.email = data.user.email;
@@ -82,8 +75,7 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
 
-    // JWT コールバック：トークンを セッションに含める
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user) {
         token.accessToken = user.accessToken;
         token.id = user.id;
@@ -91,11 +83,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    // Session コールバック：JWT をセッションに含める
-    async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
+    async session({ session, token }: any) {
+      session.accessToken = token.accessToken;
       if (session.user) {
-        session.user.id = token.id as string;
+        session.user.id = token.id;
       }
       return session;
     },
@@ -107,20 +98,16 @@ export const authOptions: NextAuthOptions = {
   },
 
   session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
-  },
-
-  jwt: {
-    secret: process.env.NEXTAUTH_SECRET,
+    strategy: "jwt" as const,
     maxAge: 24 * 60 * 60,
   },
 
-  events: {
-    async signOut() {
-      // ログアウト時の処理（必要に応じて）
-    },
+  jwt: {
+    maxAge: 24 * 60 * 60,
   },
 };
 
-export const handler = NextAuth(authOptions);
+export const { handlers: { GET, POST }, auth } = NextAuth({
+  ...authConfig,
+  skipCSRFCheck: process.env.NODE_ENV === "development",
+});
