@@ -1,0 +1,24 @@
+{
+  "name": "hakoniwa-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI箱庭ライフOS（仮）",
+  "packageManager": "pnpm@8.15.0",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "setup": "pnpm install",
+    "dev": "pnpm --filter frontend dev",
+    "build": "pnpm --filter frontend build",
+    "start": "pnpm --filter frontend start",
+    "lint": "pnpm --filter frontend lint",
+    "format": "pnpm --filter frontend format",
+    "test": "pnpm --filter frontend test"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

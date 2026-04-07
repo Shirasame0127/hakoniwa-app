@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ====== CSS Variables (デザイントークン) ====== */
+:root {
+  --primary: #16a34a;
+  --primary-light: #4ade80;
+  --primary-dark: #15803d;
+  --accent: #7c3aed;
+  --gold: #f59e0b;
+  --bg-main: #0a0f1a;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glow-green: rgba(74, 222, 128, 0.15);
+}
+
+/* ====== Base ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ====== Glassmorphism Card ====== */
+@layer components {
+  .glass-card {
+    @apply rounded-2xl border backdrop-blur-md;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-300;
+  }
+
+  .glass-card-hover:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(74, 222, 128, 0.3);
+    box-shadow:
+      0 16px 48px rgba(0, 0, 0, 0.4),
+      0 0 20px rgba(74, 222, 128, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform: translateY(-4px);
+  }
+
+  /* グラデーションボタン */
+  .btn-primary {
+    @apply px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200;
+    background: linear-gradient(135deg, #16a34a, #7c3aed);
+    box-shadow: 0 4px 15px rgba(22, 163, 74, 0.35);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(22, 163, 74, 0.5);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  /* グリーングロー */
+  .glow-green {
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+  }
+
+  /* プログレスバー */
+  .exp-bar {
+    @apply h-2 rounded-full overflow-hidden;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .exp-bar-fill {
+    @apply h-full rounded-full;
+    background: linear-gradient(90deg, #16a34a, #4ade80, #7c3aed);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  /* ステータスバッジ */
+  .badge {
+    @apply text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+
+  .badge-green {
+    @apply badge;
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+  }
+
+  .badge-gold {
+    @apply badge;
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+  }
+
+  .badge-purple {
+    @apply badge;
+    background: rgba(124, 58, 237, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(124, 58, 237, 0.25);
+  }
+
+  /* セクションタイトル */
+  .section-title {
+    @apply text-2xl font-bold;
+    background: linear-gradient(135deg, #4ade80, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ====== Animations ====== */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(74, 222, 128, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(74, 222, 128, 0.5); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-fadeInUp { animation: fadeInUp 0.5s ease forwards; }
+
+/* ====== Background Grid ====== */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ====== Scrollbar ====== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+::-webkit-scrollbar-thumb {
+  background: rgba(74, 222, 128, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(74, 222, 128, 0.6); }

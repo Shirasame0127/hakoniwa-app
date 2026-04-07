@@ -1,0 +1,92 @@
+import {
+  Home,
+  Globe,
+  Leaf,
+  Apple,
+  Activity,
+  Zap,
+  Sparkles,
+  Flame,
+  Trophy,
+  Clock,
+  Palette,
+  Menu,
+  X,
+  LogOut,
+  Mail,
+  Lock,
+  Loader2,
+  Sun,
+  Moon,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudFog,
+  CloudLightning,
+  Sunrise,
+  Sunset,
+  Flower2,
+  Snowflake,
+  Grid3x3,
+} from "lucide-react";
+
+export const Icons = {
+  Home,
+  Globe,
+  Leaf,
+  Apple,
+  Activity,
+  Zap,
+  Sparkles,
+  Flame,
+  Trophy,
+  Clock,
+  Palette,
+  Menu,
+  X,
+  LogOut,
+  Mail,
+  Lock,
+  Loader2,
+  Sun,
+  Moon,
+  Cloud,
+  CloudRain,
+  CloudSnow,
+  CloudFog,
+  CloudLightning,
+  Sunrise,
+  Sunset,
+  Flower2,
+  Snowflake,
+  Grid3x3,
+} as const;
+
+export type IconName = keyof typeof Icons;
+
+export const IconMap: Record<string, IconName> = {
+  // Navigation
+  home: "Home",
+  garden: "Leaf",
+  models: "Grid3x3",
+  food: "Apple",
+  exercise: "Activity",
+
+  // StatusBar
+  level: "Zap",
+  exp: "Sparkles",
+  streak: "Flame",
+
+  // Garden
+  milestones: "Trophy",
+  activity: "Clock",
+  addObject: "Palette",
+
+  // Auth
+  menu: "Menu",
+  close: "X",
+  logout: "LogOut",
+  email: "Mail",
+  password: "Lock",
+  loading: "Loader2",
+};

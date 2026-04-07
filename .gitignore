@@ -1,0 +1,98 @@
+# ==========================
+# 環境変数（絶対にコミットしない）
+# ==========================
+.env
+.env.local
+.env.*.local
+
+# ==========================
+# Frontend
+# ==========================
+frontend/node_modules/
+frontend/.next/
+frontend/.pnpm-debug.log
+frontend/dist/
+frontend/build/
+frontend/.turbo/
+frontend/.vercel/
+
+# pnpm
+node_modules/
+.pnpm-debug.log
+frontend/.pnpm-store/
+
+# ==========================
+# Backend (Python)
+# ==========================
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# 仮想環境
+.venv/
+venv/
+env/
+ENV/
+
+# テスト / カバレッジ
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Ruff / Linter
+.ruff_cache/
+
+# Python パッケージ
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ==========================
+# Docker
+# ==========================
+# docker-compose.override.yml はローカル設定として無視
+docker-compose.override.yml
+
+# ==========================
+# OS
+# ==========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+
+# ==========================
+# エディタ / IDE
+# ==========================
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+.editorconfig
+
+# ==========================
+# ログ
+# ==========================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================
+# 3D モデル (大容量ファイルは LFS 推奨)
+# ==========================
+# frontend/public/models/*.glb
+# frontend/public/models/*.gltf
+
+# ==========================
+# その他
+# ==========================
+.temp/
+.cache/
+*.tmp
