@@ -103,3 +103,31 @@ export async function toggleObjectLike(
   if (!res.ok) throw new Error("いいねの処理に失敗しました");
   return res.json();
 }
+
+/** Voxelモデル（.vox）アップロード用wrapper */
+export async function uploadVoxModel(params: {
+  file: File;
+  name: string;
+  category: string;
+  description?: string;
+  token: string;
+}): Promise<HakoniwaObjectDetail> {
+  // VOX→GLB変換はバックエンドで行う前提
+  // catalog_idはバックエンドで自動生成
+  const form = new FormData();
+  form.append("file", params.file);
+  form.append("name", params.name);
+  form.append("category", params.category);
+  form.append("token", params.token);
+  if (params.description) form.append("description", params.description);
+
+  const res = await fetch(`${BASE}/api/voxel/upload`, {
+    method: "POST",
+    body: form,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail ?? "VOXファイルのアップロードに失敗しました");
+  }
+  return res.json();
+}

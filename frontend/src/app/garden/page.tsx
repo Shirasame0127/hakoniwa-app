@@ -54,9 +54,9 @@ function WeatherBadge() {
 
   return (
     <div className="glass-card px-3 py-1.5 text-xs text-slate-300 flex items-center gap-2 flex-wrap">
-      <TimeIcon size={16} title={`時間帯: ${env.time_of_day}`} className="text-amber-400" />
-      <WeatherIcon size={16} title={`天候: ${env.weather}`} className="text-blue-400" />
-      <SeasonIcon size={16} title={`季節: ${env.season}`} className="text-green-400" />
+      <TimeIcon size={16} className="text-amber-400" />
+      <WeatherIcon size={16} className="text-blue-400" />
+      <SeasonIcon size={16} className="text-green-400" />
       {env.temperature != null && <span>{env.temperature.toFixed(0)}°C</span>}
       <span className="text-slate-500 whitespace-nowrap">{env.city_name}</span>
     </div>

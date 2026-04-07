@@ -11,6 +11,14 @@
  *   SP001~ special   特別 (ゲームソフト/本/食材仕分け)
  */
 
+// ボクセルピクセル表現
+export interface PixelData {
+  x: number;
+  y: number;
+  z: number;
+  colorHex: string;
+}
+
 export type ObjectCategory =
   | "food"
   | "plant"
@@ -116,4 +124,18 @@ export const LOCATION_LABELS: Record<string, string> = {
 export const CATALOG_PREFIXES: Record<ObjectCategory, string> = {
   food: "F", plant: "P", person: "C", furniture: "I",
   building: "B", field: "L", special: "SP",
+};
+
+/** ボクセル編集用・外部連携用の型エイリアス */
+export type VoxelCategory = ObjectCategory;
+
+/** カテゴリ別のボクセルモデル最大サイズ（px単位） */
+export const CATEGORY_MAX_SIZE: Record<ObjectCategory, { w: number; h: number; d: number }> = {
+  food:      { w: 32, h: 32, d: 32 },
+  plant:     { w: 24, h: 32, d: 24 },
+  person:    { w: 24, h: 40, d: 24 },
+  furniture: { w: 32, h: 32, d: 32 },
+  building:  { w: 64, h: 64, d: 64 },
+  field:     { w: 64, h: 8,  d: 64 },
+  special:   { w: 32, h: 32, d: 32 },
 };

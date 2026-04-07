@@ -3,6 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchEnvironment, type EnvironmentData } from "@/shared/api/weather";
 
+// 外部に再エクスポート
+export type { EnvironmentData };
+
 // 天候・時間帯ごとの環境パラメータ
 export interface EnvironmentParams {
   // 照明

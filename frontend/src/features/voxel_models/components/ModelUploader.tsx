@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Upload, FileBox, CheckCircle, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { uploadVoxModel } from "@/shared/api/voxel-models";
-import { CATEGORY_LABELS, CATEGORY_MAX_SIZE, type VoxelCategory } from "@/features/voxel_models/types";
+import { CATEGORY_LABELS, CATEGORY_MAX_SIZE, type ObjectCategory } from "@/features/voxel_models/types";
 
 type Step = "select" | "meta" | "uploading" | "done" | "error";
 
@@ -15,7 +15,7 @@ export function ModelUploader() {
   const [step, setStep] = useState<Step>("select");
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
-  const [category, setCategory] = useState<VoxelCategory>("food");
+  const [category, setCategory] = useState<ObjectCategory>("food");
   const [description, setDescription] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -101,7 +101,7 @@ export function ModelUploader() {
           <p>① Export → .vox を選択</p>
           <p>② 上記エリアにドロップ</p>
           <p className="mt-2 font-medium">ジャンル別最大サイズ:</p>
-          {(Object.keys(CATEGORY_MAX_SIZE) as VoxelCategory[]).map((cat) => {
+          {(Object.keys(CATEGORY_MAX_SIZE) as ObjectCategory[]).map((cat) => {
             const s = CATEGORY_MAX_SIZE[cat];
             return (
               <p key={cat}>
@@ -142,7 +142,7 @@ export function ModelUploader() {
         <div className="space-y-1.5">
           <label className="text-[13px] font-medium text-[#1A1A17]">カテゴリ</label>
           <div className="grid grid-cols-3 gap-2">
-            {(Object.keys(CATEGORY_LABELS) as VoxelCategory[]).map((cat) => (
+            {(Object.keys(CATEGORY_LABELS) as ObjectCategory[]).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
