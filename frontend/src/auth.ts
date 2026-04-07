@@ -107,7 +107,4 @@ const authConfig = {
   },
 };
 
-export const { handlers: { GET, POST }, auth } = NextAuth({
-  ...authConfig,
-  skipCSRFCheck: process.env.NODE_ENV === "development",
-});
+export const { handlers: { GET, POST }, auth } = NextAuth(authConfig);
