@@ -20,7 +20,7 @@ export function Navigation() {
   const { data: session } = useSession();
 
   const handleLogout = async () => {
-    await signOut({ redirect: true, redirectTo: "/auth/login" });
+    await signOut();
   };
 
   return (
