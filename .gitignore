@@ -87,8 +87,8 @@ yarn-error.log*
 # ==========================
 # 3D モデル (大容量ファイルは LFS 推奨)
 # ==========================
-# frontend/public/models/*.glb
-# frontend/public/models/*.gltf
+frontend/public/models/**/*.glb
+frontend/public/models/**/*.gltf
 
 # ==========================
 # その他
